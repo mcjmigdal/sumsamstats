@@ -1,0 +1,229 @@
+---
+title: "ATAC QC"
+author: "MM"
+date: "7/24/2018"
+output: 
+  html_document:
+    code_folding: hide
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(shiny)
+library(minpack.lm)
+```
+
+## ATAC-seq quality control checks for multiple libraries
+
+Standards from [encodeproject](https://www.encodeproject.org/atac-seq/)
+
++ two or more biological replicates
++ at least 25 million fragments
++ aligment rate greater than 95%
++ replicate concordance measuredby calculating IDR values
++ library complexity measured using Non-Redundant Fraction and PCR Bottlenecking Coefficients 1 and 2. NRF > 0.9, PBC1 > 0.9, PBC2 > 3
++ mononucleosome peak must be present in the fragment length distribution
++ FRiP > 0.3
++ TSS enrichment
+
+# Functions
+```{r myFun}
+readSamtoolsStats <- function(file, ...) {
+  if (! is.character(file)){
+    cat("File argument must me of class character!\n")
+  }
+  
+  .getData <- function(input, pattern, columns, col.names="") {
+    handle <- strsplit(
+      inputFile[grep(pattern = pattern, input)], 
+      split="\t"
+      )
+    handle <- data.frame(
+      sapply(columns, function(i) sapply(handle, `[`, i)),
+      stringsAsFactors = FALSE
+      )
+    if (length(col.names > 0)) {
+      colnames(handle) <- col.names
+    }
+    return(handle)
+  }
+  
+  stats <- list()
+  inputFile <- readLines(file)
+  toExtract <- list(
+    pattern = list("SN", "IS"),
+    columns = list(
+      c(2,3),
+      c(2,3)
+      ),
+    col.names = list(
+      c("description", "value"),
+      c("insert_size", "pairs_total")
+    )
+  )
+    
+  for (i in 1:2) {
+    stats[[toExtract$pattern[[i]]]] <- .getData(
+      inputFile, 
+      paste("^", toExtract$pattern[[i]], sep=""),
+      columns = toExtract$columns[[i]],
+      col.names = toExtract$col.names[[i]]
+    )
+  }
+  return(stats)
+}
+
+plotSummaryNumbers <- function(data, samples, what = "raw total sequences:") {
+  data = data %>% filter(sample %in% samples) %>% filter(description %in% what)
+  ggplot(data = data, mapping = aes(x=sample, y=value, fill=sample)) +
+    geom_bar(stat = "identity") +
+    ylab(what) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+}
+
+plotInsertSize <- function(data, samples, log=FALSE, lims = c(0,400), sizeLimit = 75, combine = F) {
+  color = rainbow(length(levels(data$sample)))
+  names(color) = levels(data$sample)
+  if (log) {
+    data$pairs_total = log(data$pairs_total)
+  }
+  data = data %>% 
+    filter(insert_size >= sizeLimit) %>%
+    filter(sample %in% samples)
+  ggplot(data = data, mapping = aes(x=insert_size, y = pairs_total, color = sample)) + 
+    geom_line() +
+    scale_colour_manual(values = color[as.character(data$sample)]) +
+    xlim(lims) +
+    xlab("Insert size") +
+    ylab("Normalized read density * 10e-3")
+}
+
+.exponent <- function(x, a, b ) {
+  x = seq(min(x), max(x), length.out = 1000)
+  a * exp(b*x)
+}
+
+.gauss <- function(x, a, mean, sd) {
+  x = seq(min(x), max(x), length.out = 1000)
+  a * exp( -0.5 * ((x-mean)/sd)**2 )
+}
+
+plotMixedFun <- function(x, a, b, k, mean, sd) {
+  x = seq(min(x), max(x), length.out = 1000)
+  df = data.frame(x=x, y=.exponent(x, a, b) + .gauss(x, k, mean, sd))
+  geom_line(data=df, mapping=aes(x=x, y=y), linetype="dashed", colour = "black")
+}
+# 0.15905124474009513, -0.0094651583582273484, 0.0086995686895339954, 365.42632309664413, 95.365525004444052, 0.022131046579088043, 207.49145316670516, 31.302234771853929, -0.0020629874151311383, 463.07793971380624, -30.345889547199366
+```
+
+# Read data
+```{r readData}
+path = "../../mpawlak/atac_follow_up/map"
+logs = list.files(path=path, pattern=".log$", full.names=TRUE)
+data = lapply(logs, readSamtoolsStats)
+samples = gsub(".stats.log$", "", gsub(".*/", "", logs))
+
+summaryNumbers = do.call(rbind,
+  lapply(1:length(data),
+    function(i) {data[[i]]$SN$sample = factor(samples[i]); data[[i]]$SN})) %>%
+    mutate(value = as.numeric(value))
+
+insertSize = do.call(rbind,
+  lapply(1:length(data),
+    function(i) {data[[i]]$IS$sample = factor(samples[i]); data[[i]]$IS})) %>%
+  mutate_if(is.character, as.numeric) %>%
+  group_by(sample) %>%
+  mutate(pairs_total = pairs_total / sum(pairs_total))
+``` 
+
+# Visualise data
+```{r visualizeResults}
+# Summary numbers
+inputPanel(
+    checkboxGroupInput(inputId = "samplesSummaryNumbers", 
+                   label = "Samples to show:", 
+                   choices = unique(summaryNumbers$sample),
+                   selected = unique(summaryNumbers$sample)
+    ),
+    selectInput(inputId = "what",
+                   label = "Property to plot:", 
+                   choices = unique(summaryNumbers$description),
+                   selected = "raw total sequences:"
+    )
+  )
+
+renderPlot({
+      plotSummaryNumbers(data = summaryNumbers,
+                 samples = input$samplesSummaryNumbers,
+                 what = input$what
+      )
+})
+
+
+# Insert size
+inputPanel(
+    checkboxGroupInput(inputId = "samplesInsertSize", 
+                   label = "Samples to show:", 
+                   choices = unique(insertSize$sample),
+                   selected = unique(insertSize$sample)
+    ),
+    selectInput(inputId = "scale",
+                   label = "Scale:", 
+                   choices = c("normal", "log"),
+                   selected = "normal"
+    ),
+    sliderInput(inputId = "lims",
+                label = "Range:",
+                min = 0, max = 2000,
+                value = c(0,400)),
+    checkboxGroupInput(inputId = "fit", 
+                   label = "Fitt mixed function:", 
+                   choices = c(TRUE, FALSE),
+                   selected = c(FALSE)
+    ),
+    sliderInput(inputId = "a",
+                label = "a",
+                min = -1, max = 1,
+                value = 0.01, step = 0.001
+    ),
+    sliderInput(inputId = "b",
+                label = "b",
+                min = -1, max = 1,
+                value = -0.01, step = 0.001
+    ),
+    sliderInput(inputId = "k",
+                label = "k",
+                min = 0, max = 1,
+                value = 0.005, step = 0.001
+    ),
+    sliderInput(inputId = "mean",
+                label = "mean",
+                min = 0, max = 2000,
+                value = 200, step = 50
+    ),
+    sliderInput(inputId = "sd",
+                label = "sd",
+                min = 0, max = 200,
+                value = 50, step = 10
+    )
+  ) 
+
+renderPlot({
+    if(input$fit) {
+      plotInsertSize(data = insertSize,
+                 samples = input$samplesInsertSize,
+                 log = ifelse(input$scale == "log", T, F),
+                 lims = input$lims
+      ) + plotMixedFun(insertSize$insert_size, input$a, input$b, input$k,  input$mean, input$sd)  + ylim(c(0, 0.015))
+    } else {
+      plotInsertSize(data = insertSize,
+                 samples = input$samplesInsertSize,
+                 log = ifelse(input$scale == "log", T, F),
+                 lims = input$lims
+      )
+    }
+})
+```
