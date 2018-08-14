@@ -1,69 +1,102 @@
 ui <- fluidPage(
-  inputPanel(
-    checkboxGroupInput(inputId = "samplesSummaryNumbers",
+  fluidRow(
+    inputPanel(
+      checkboxGroupInput(inputId = "samplesSummaryNumbers",
                        label = "Samples to show:",
                        choices = unique(summaryNumbers$sample),
                        selected = unique(summaryNumbers$sample)
-    ),
-    selectInput(inputId = "what",
+      ),
+      selectInput(inputId = "what",
                 label = "Property to plot:",
                 choices = unique(summaryNumbers$description),
                 selected = "raw total sequences:"
+      )
     )
   ),
 
-  mainPanel(
-    plotOutput(outputId = "summaryNumbersPlot")
-  ),
+  plotOutput(outputId = "summaryNumbersPlot"),
 
-  inputPanel(
-    checkboxGroupInput(inputId = "samplesInsertSize",
+  hr(),
+
+  fluidRow(
+    inputPanel(
+      checkboxGroupInput(inputId = "samplesInsertSize",
                        label = "Samples to show:",
-                       choices = unique(insertSize$sample),
-                       selected = unique(insertSize$sample)
-    ),
-    selectInput(inputId = "scale",
+                       choices = unique(summaryNumbers$sample),
+                       selected = unique(summaryNumbers$sample)
+      ),
+      selectInput(inputId = "scale",
                 label = "Scale:",
                 choices = c("normal", "log"),
                 selected = "normal"
-    ),
-    sliderInput(inputId = "lims",
+      ),
+      sliderInput(inputId = "lims",
                 label = "Range:",
                 min = 0, max = 2000,
                 value = c(0,400)),
-    checkboxGroupInput(inputId = "fit",
+      checkboxInput(inputId = "fit",
                        label = "Fitt mixed function:",
-                       choices = c(TRUE, FALSE),
-                       selected = c(FALSE)
-    ),
-    sliderInput(inputId = "a",
+                       value = FALSE
+      ),
+      numericInput(inputId = "a",
                 label = "a",
                 min = -1, max = 1,
-                value = 0.01, step = 0.001
-    ),
-    sliderInput(inputId = "b",
+                value = 0.065, step = 0.001
+      ),
+      numericInput(inputId = "b",
                 label = "b",
                 min = -1, max = 1,
-                value = -0.01, step = 0.001
-    ),
-    sliderInput(inputId = "k",
-                label = "k",
+                value = -0.018, step = 0.001
+      ),
+      numericInput(inputId = "k1",
+                label = "k1",
                 min = 0, max = 1,
-                value = 0.005, step = 0.001
-    ),
-    sliderInput(inputId = "mean",
-                label = "mean",
+                value = 0.003, step = 0.001
+      ),
+      numericInput(inputId = "mean1",
+                label = "mean1",
                 min = 0, max = 2000,
                 value = 200, step = 50
-    ),
-    sliderInput(inputId = "sd",
-                label = "sd",
+      ),
+      numericInput(inputId = "sd1",
+                label = "sd1",
                 min = 0, max = 200,
-                value = 50, step = 10
+                value = 30, step = 10
+      ),
+      numericInput(inputId = "k2",
+                   label = "k2",
+                   min = 0, max = 1,
+                   value = 0.001, step = 0.001
+      ),
+      numericInput(inputId = "mean2",
+                   label = "mean2",
+                   min = 0, max = 2000,
+                   value = 200, step = 50
+      ),
+      numericInput(inputId = "sd2",
+                   label = "sd2",
+                   min = 0, max = 200,
+                   value = 400, step = 10
+      ),
+      numericInput(inputId = "k3",
+                   label = "k3",
+                   min = 0, max = 1,
+                   value = 0.001, step = 0.001
+      ),
+      numericInput(inputId = "mean3",
+                   label = "mean3",
+                   min = 0, max = 2000,
+                   value = 600, step = 50
+      ),
+      numericInput(inputId = "sd3",
+                   label = "sd3",
+                   min = 0, max = 200,
+                   value = 50, step = 10
+      ),
+      actionButton("nls", "Start nls fit")
     )
   ),
 
-  mainPanel(
-    plotOutput(outputId = "insertSizePlot")
-  )
+  plotOutput(outputId = "insertSizePlot")
+
 )
