@@ -20,8 +20,3 @@ plotInsertSize <- function(data, samples, log = FALSE, lims = c(0, 400),
         xlim(lims) + xlab("Insert size") + ylab("Normalized read density * 10e-3")
 }
 
-plotMixedFun <- function(x, a, b, k1, mean1, sd1, k2, mean2, sd2, k3, mean3, sd3) {
-  x = seq(min(x), max(x), length.out = 1000)
-  df = data.frame(x=x, y=exponentFun(x, a, b) + gaussFun(x, k1, mean1, sd1) + gaussFun(x, k2, mean2, sd2) + gaussFun(x, k3, mean3, sd3))
-  geom_line(data=df, mapping=aes(x=x, y=y), linetype="dashed", colour = "black")
-}

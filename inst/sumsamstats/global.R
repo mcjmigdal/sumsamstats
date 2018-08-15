@@ -6,7 +6,6 @@ library(shiny)
 logs = list.files(path = "/home/mmigdal/Documents/site_things/sumsamstats", pattern = ".log$", full.names = TRUE)
 data = lapply(logs, readSamtoolsStats)
 samples = gsub(".stats.log$", "", gsub(".*/", "", logs))
-cat(samples)
 
 summaryNumbers = do.call(rbind, lapply(1:length(data), function(i) {
   data[[i]]$SN$sample = factor(samples[i])
