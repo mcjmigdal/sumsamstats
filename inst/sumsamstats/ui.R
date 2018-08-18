@@ -1,5 +1,4 @@
 ui <- fluidPage(
-  fluidRow(
     inputPanel(
       checkboxGroupInput(inputId = "samplesSummaryNumbers",
                        label = "Samples to show:",
@@ -11,14 +10,15 @@ ui <- fluidPage(
                 choices = unique(summaryNumbers$description),
                 selected = "raw total sequences:"
       )
-    )
   ),
 
   plotOutput(outputId = "summaryNumbersPlot"),
 
   hr(),
 
-  fluidRow(
+
+
+
     inputPanel(
       checkboxGroupInput(inputId = "samplesInsertSize",
                        label = "Samples to show:",
@@ -37,9 +37,9 @@ ui <- fluidPage(
       checkboxInput(inputId = "fit",
                        label = "Fitt mixed function:",
                        value = FALSE
-      ),
-    )
-  ),
+      )
+    ),
+
 
   plotOutput(outputId = "insertSizePlot")
 
