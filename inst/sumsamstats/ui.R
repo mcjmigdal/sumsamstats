@@ -3,7 +3,7 @@ ui <- navbarPage(title="Summary of samtools stats output",
 
     tabPanel("Home",
              h1("Summary of samtools stats output"),
-             shinyDirButton(id = "inputDir", label = "Input directory", title = "")
+             fileInput(inputId = "inputFiles", label = "Input files", multiple = TRUE)
     ),
 
     tabPanel("Summary statistics",
