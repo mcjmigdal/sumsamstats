@@ -54,6 +54,11 @@ server <- function(input, output, session) {
     output$limsInsertSize <- renderUI(sliderInput(inputId = "limsInsertSize", label = "Range:", min = 0, max = 2000, value = c(0, 400)))
 
     output$insertSizePlot <- renderPlot({
-        plotInsertSize(data = insertSize(), samples = input$samplesInsertSize, log = ifelse(input$scaleInsertSize == "log", T, F), lims = input$limsInsertSize)
+        if (length(input$limsInsertSize) == 0 || length(input$scaleInsertSize) == 0) {
+          warning("One of input values to insertSizePlot was of length 0, returning NULL plot.")
+          return(NULL)
+        }
+        useLogScale = ifelse(input$scaleInsertSize == "log", T, F)
+        plotInsertSize(data = insertSize(), samples = input$samplesInsertSize, log = useLogScale, lims = input$limsInsertSize)
     })
 }

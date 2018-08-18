@@ -11,7 +11,7 @@ ui <- navbarPage(title="ATAC-seq quality control",
              br(),
              fileInput(inputId = "inputFiles", label = "Input files:", multiple = TRUE),
              hr(),
-             h3("ATAC-seq quality standards:"),
+             h3("ENCODE ATAC-seq quality standards:"),
              tags$ul(
                tags$li("two or more biological replicates"),
                tags$li("at least 25 million fragments"),
@@ -22,7 +22,6 @@ ui <- navbarPage(title="ATAC-seq quality control",
                tags$li("FRiP > 0.3"),
                tags$li("TSS enrichment")
              )
-
     ),
 
     tabPanel("Summary statistics",
