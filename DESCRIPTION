@@ -1,12 +1,15 @@
 Package: sumsamstats
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
+Title: Summarizing Samtools Stats Output With ATAC-seq QC in mind 
+Version: 1.0.0
 Authors@R: person("Maciek", "Migdał", email = "mcjmigdal@gmail.com", role = c("aut", "cre"))
 Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Description: The package provides samtools stats parser that allows to easly read stats report
+to R. It also provides several plotting functions for quick visualisation of libraries statistics.
+It support processing multiple files togheter hance it can be used to create summaries and allow
+quick inspection of multiple samples. Available plots were done as so they allow to check some of the
+ENCODE ATAC-seq quality guidelines.
+License: CC0
 Encoding: UTF-8
 LazyData: true
 Imports:

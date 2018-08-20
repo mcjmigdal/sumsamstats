@@ -3,22 +3,22 @@ library(ggplot2)
 library(minpack.lm)
 library(shiny)
 
-exampleInput = list.files("/home/mmigdal/Documents/sumsamstats/", ".log$", full.names = T)
+exampleInput <- list.files("/home/mmigdal/Documents/sumsamstats/", ".log$", full.names = T)
 
 server <- function(input, output, session) {
 
-    data = reactive({
+    data <- reactive({
         paths <- input$inputFiles$datapath
         if (is.null(paths)) {
-            paths = exampleInput
+            paths <- exampleInput
         }
         lapply(paths, readSamtoolsStats)
     })  # TODO SET UP DEFAULT PATHs TO EXEMPLARY LOGS
 
-    samples = reactive({
+    samples <- reactive({
         names <- input$inputFiles$name
         if (is.null(names)) {
-            names = exampleInput
+            names <- exampleInput
         }
         gsub(".*/", "", names)
     })
