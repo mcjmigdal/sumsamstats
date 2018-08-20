@@ -27,9 +27,10 @@ ui <- navbarPage(title="ATAC-seq quality control",
     tabPanel("Summary statistics",
       inputPanel(
         uiOutput(outputId = "summaryInputSamples"),
-        uiOutput(outputId = "summaryInputProperty"),
-        plotOutput(outputId = "summaryNumbersPlot")
-      )
+        uiOutput(outputId = "summaryInputProperty")
+
+      ),
+      plotOutput(outputId = "summaryNumbersPlot")
     ),
 
   tabPanel("Insert size distribution",
