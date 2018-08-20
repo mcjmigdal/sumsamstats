@@ -1,16 +1,13 @@
 #' Parse samtools stat output
 #'
 #' readSamtoolsStats parses output of samtools stat making it easy to
-#' work with it in R. Supports reading multiple files at once.
+#' work with it in R.
 #'
 #' @param file the name of the file which the data are to be read from. File must be
-#' of type \code{character} and can be a vector of characters, providing paths to
-#' multiple input files. If it does not provide an absolute path(s), the file name is
-#' relative to the current working directory, \code{getwd()}.
+#' of type \code{character}, providing path to input file. If it does not provide an
+#' absolute path(s), the file name is relative to the current working directory, \code{getwd()}.
 #'
-#' @return If one file is provided as input returns list of data frames holding data
-#' from different parts of \code{samtools stat} output. In case that multiple files are
-#' provided list of lists is returned.
+#' @return list of data frames holding data from different parts of \code{samtools stat} output.
 #'
 #' @examples
 #' readSamtoolsStats(file = "path/to/samtools/stats/output")
@@ -18,7 +15,7 @@
 #' @export
 readSamtoolsStats <- function(file, ...) {
     if (!is.character(file)) {
-        stop("File argument must me of class character!\n")
+        stop("File argument must be of class character!\n")
     }
     if (!file.exists(file)) {
         stop(paste0("File '", file, "' doesn't exists!\n"))

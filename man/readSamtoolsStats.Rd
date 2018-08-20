@@ -8,18 +8,15 @@ readSamtoolsStats(file, ...)
 }
 \arguments{
 \item{file}{the name of the file which the data are to be read from. File must be
-of type \code{character} and can be a vector of characters, providing paths to
-multiple input files. If it does not provide an absolute path(s), the file name is
-relative to the current working directory, \code{getwd()}.}
+of type \code{character}, providing path to input file. If it does not provide an
+absolute path(s), the file name is relative to the current working directory, \code{getwd()}.}
 }
 \value{
-If one file is provided as input returns list of data frames holding data
-from different parts of \code{samtools stat} output. In case that multiple files are
-provided list of lists is returned.
+list of data frames holding data from different parts of \code{samtools stat} output.
 }
 \description{
 readSamtoolsStats parses output of samtools stat making it easy to
-work with it in R. Supports reading multiple files at once.
+work with it in R.
 }
 \examples{
 readSamtoolsStats(file = "path/to/samtools/stats/output")
