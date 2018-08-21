@@ -13,7 +13,7 @@
 #' readSamtoolsStats(file = "path/to/samtools/stats/output")
 #'
 #' @export
-readSamtoolsStats <- function(file, ...) {
+readSamtoolsStats <- function(file) {
     if (!is.character(file)) {
         stop("File argument must be of class character!\n")
     }
@@ -21,21 +21,46 @@ readSamtoolsStats <- function(file, ...) {
         stop(paste0("File '", file, "' doesn't exists!\n"))
     }
 
-    getData <- function(input, pattern, columns, col.names = "") {
-        handle <- strsplit(inputFile[grep(pattern = pattern, input)], split = "\t")
-        handle <- data.frame(sapply(columns, function(i) sapply(handle, `[`, i)), stringsAsFactors = FALSE)
-        if (length(col.names > 0)) {
-            colnames(handle) <- col.names
-        }
-        return(handle)
-    }
-
     stats <- list()
     inputFile <- readLines(file)
     toExtract <- list(pattern = list("SN", "IS"), columns = list(c(2, 3), c(2, 3)), col.names = list(c("description", "value"), c("insert_size", "pairs_total")))
 
     for (i in 1:2) {
-        stats[[toExtract$pattern[[i]]]] <- getData(inputFile, paste("^", toExtract$pattern[[i]], sep = ""), columns = toExtract$columns[[i]], col.names = toExtract$col.names[[i]])
+        stats[[toExtract$pattern[[i]]]] <- .grepData(inputFile, paste("^", toExtract$pattern[[i]], sep = ""), columns = toExtract$columns[[i]], col.names = toExtract$col.names[[i]])
     }
     return(stats)
+}
+
+#' Helper function for parsing output of samtools stats
+#'
+#' As readSamtoolsStats parses output of samtools stat this function is used to grep relevant
+#' parts of the output.
+#'
+#' @param input A character vector containing output of samtools stats, each line as one element.
+#'
+#' @param section A pattern to extract from the report. Each section of samtools stats report is uniquley
+#' labeled, for example Summary Numbers are labeled as SN. Currently supported sections: SN, IS.
+#'
+#' @param columns A integer vector containing numbers of columns to extract from specified section of samtools
+#' stats report.
+#'
+#' @param col.names A character vector containing names of extracted columns. Optional.
+#'
+#' @return data frame holding data from selected section of \code{samtools stat} output.
+#'
+#' @examples
+#' file <- "path/to/samtools/stats/output"
+#' inputFile <- readLines(file)
+#' .grepData(input=inputFile, section="SN", columns=c(2,3), col.names=c("description", "value"))
+#'
+.grepData <- function(input, section, columns, col.names = "") {
+  if (! section %in% c("SN", "IS")) {
+    stop(paste0("Parsing '", section, "' is not supported!"))
+  }
+  handle <- strsplit(input[grep(pattern = section, input)], split = "\t")
+  handle <- data.frame(sapply(columns, function(i) sapply(handle, `[`, i)), stringsAsFactors = FALSE)
+  if (length(col.names > 0)) {
+    colnames(handle) <- col.names
+  }
+  return(handle)
 }

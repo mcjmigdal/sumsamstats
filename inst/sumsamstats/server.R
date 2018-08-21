@@ -3,7 +3,8 @@ library(ggplot2)
 library(minpack.lm)
 library(shiny)
 
-exampleInput <- list.files("/home/mmigdal/Documents/site_things/sumsamstats/", ".log$", full.names = T)
+exampleInput <- c("/home/mmigdal/Documents/site_things/sumsamstats/sample1", "/home/mmigdal/Documents/site_things/sumsamstats/sample2",
+                  "/home/mmigdal/Documents/site_things/sumsamstats/sample3", "/home/mmigdal/Documents/site_things/sumsamstats/sample4")
 
 server <- function(input, output, session) {
 
