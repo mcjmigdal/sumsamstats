@@ -23,10 +23,63 @@ readSamtoolsStats <- function(file) {
 
     stats <- list()
     inputFile <- readLines(file)
-    toExtract <- list(pattern = list("SN", "IS"), columns = list(c(2, 3), c(2, 3)), col.names = list(c("description", "value"), c("insert_size", "pairs_total")))
-
+    toExtract <- list(
+                      section = list(
+                                     "SN", # Summary Numbers
+                                     "FFQ", # First Fragment Qualitites
+                                     "LFQ", # Last Fragment Qualitites
+                                     "GCF", # GC Content of First fragments
+                                     "GCL", # GC Content of Last fragments
+                                     "GCC", # ACGT content per cycle
+                                     "IS", # Insert Size
+                                     "RL", # Read lengths
+                                     "ID", # Indel distribution
+                                     "IC", # Indels per cycle
+                                     "COV", # Coverage distribution
+                                     "GCD" # GC-depth
+                                     ),
+                      columns = list(
+                                     c(2, 3),
+                                     2:43,
+                                     2:43,
+                                     c(2, 3),
+                                     c(2, 3),
+                                     2:8,
+                                     c(2, 3),
+                                     c(2, 3),
+                                     c(2, 3, 4),
+                                     c(2, 3, 4, 5, 6),
+                                     c(3, 4), # TODO review if all informative values are greped
+                                     c(2, 3, 4, 5, 6, 7, 8)
+                                     ),
+                      col.names = list(
+                                       c("description", "value"),
+                                       c("cycle", paste0("Qual", 1:41)),
+                                       c("cycle", paste0("Qual", 1:41)),
+                                       c("GC", "count"),
+                                       c("GC", "count"),
+                                       c("cycle", "A", "C", "G", "T", "N", "O"),
+                                       c("insert_size", "pairs_total"),
+                                       c("read_length", "count"),
+                                       c("length", "number_of_insertions", "number_of_deletions"),
+                                       c(
+                                         "cycle",
+                                         "number_of_insertions_fwd",
+                                         "number_of_insertions_rwd",
+                                         "number_of_deletions_fwd",
+                                         "number_of_deletions_rwd"
+                                         ),
+                                       c("coverage", "bases"),
+                                       c("GC", "unique_sequence_percentiles", "10th", "25th", "50th", "75th", "90th")
+                                       )
+                      )
     for (i in 1:2) {
-        stats[[toExtract$pattern[[i]]]] <- .grepData(inputFile, paste("^", toExtract$pattern[[i]], sep = ""), columns = toExtract$columns[[i]], col.names = toExtract$col.names[[i]])
+        stats[[toExtract$section[[i]]]] <- .grepData(
+                                                     inputFile,
+                                                     toExtract$section[[i]],
+                                                     columns = toExtract$columns[[i]],
+                                                     col.names = toExtract$col.names[[i]]
+                                                     )
     }
     return(stats)
 }
@@ -54,9 +107,10 @@ readSamtoolsStats <- function(file) {
 #' .grepData(input=inputFile, section="SN", columns=c(2,3), col.names=c("description", "value"))
 #'
 .grepData <- function(input, section, columns, col.names = "") {
-  if (! section %in% c("SN", "IS")) {
+  if (! section %in% c("SN", "FFQ", "LFQ", "GCF", "GCL", "GCC", "IS", "RL", "ID", "IC", "COV", "GCD")) { # TODO move it to readSamStats
     stop(paste0("Parsing '", section, "' is not supported!"))
   }
+  section <- paste("^", section, sep = "")
   handle <- strsplit(input[grep(pattern = section, input)], split = "\t")
   handle <- data.frame(sapply(columns, function(i) sapply(handle, `[`, i)), stringsAsFactors = FALSE)
   if (length(col.names > 0)) {
