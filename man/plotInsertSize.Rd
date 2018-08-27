@@ -5,7 +5,7 @@
 \title{Plot Insert Size Samtools Stat section}
 \usage{
 plotInsertSize(data, samples, log = FALSE, lims = c(0, 400),
-  sizeLimit = 75)
+  sizeLimit = 0)
 }
 \arguments{
 \item{data}{Insert Size (IS)) part of output returned by \code{\link{readSamtoolsStats}}

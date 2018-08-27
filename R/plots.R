@@ -46,7 +46,7 @@ plotSummaryNumbers <- function(data, samples, what = "raw total sequences") {
 #' @import ggplot2
 #'
 #' @export
-plotInsertSize <- function(data, samples, log = FALSE, lims = c(0, 400), sizeLimit = 75) {
+plotInsertSize <- function(data, samples, log = FALSE, lims = c(0, 400), sizeLimit = 0) {
     color = rainbow(length(levels(data$sample)))
     names(color) = levels(data$sample)
     if (log) {
