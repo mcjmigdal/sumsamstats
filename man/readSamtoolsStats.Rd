@@ -13,6 +13,10 @@ absolute path(s), the file name is relative to the current working directory, \c
 }
 \value{
 list of data frames holding data from different parts of \code{samtools stat} output.
+Sections names are: SN (summary numbers), FFQ (first fragment qualities), LFQ (last fragment qualities),
+GCF (GC Content of first fragments), GCL (GC content of last fragments), GCC (ACGT content per cycle),
+IS (insert size), RL (read lengths), ID (indel distribution), IC (indels per cycle), COV (coverage distribution),
+GCD (GC-depth)
 }
 \description{
 readSamtoolsStats parses output of samtools stat making it easy to
