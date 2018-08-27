@@ -21,7 +21,7 @@ server <- function(input, output, session) {
         if (is.null(names)) {
             names <- exampleInput
         }
-        gsub(".*/", "", names)
+        gsub(".stats.txt$", "", gsub(".*/", "", names))
     })
 
     summaryNumbers = reactive(do.call(rbind, lapply(1:length(data()), function(i) {
