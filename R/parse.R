@@ -77,7 +77,7 @@ readSamtoolsStats <- function(file) {
                                        c("GC", "unique_sequence_percentiles", "10th", "25th", "50th", "75th", "90th")
                                        )
                       )
-    for (i in 1:2) {
+    for (i in 1:12) {
         stats[[toExtract$section[[i]]]] <- .grepData(
                                                      inputFile,
                                                      toExtract$section[[i]],
