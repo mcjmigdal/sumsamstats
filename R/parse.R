@@ -17,73 +17,77 @@
 #' readSamtoolsStats(file = "path/to/samtools/stats/output")
 #'
 #' @export
-readSamtoolsStats <- function(file) {
+readSamtoolsStats <- function(file, section = c("SN", "FFQ", "LFQ", "GCF", "GCL", "GCC", "IS", "RL", "ID", "IC", "COV", "GCD")) {
     if (!is.character(file)) {
         stop("File argument must be of class character!\n")
     }
     if (!file.exists(file)) {
         stop(paste0("File '", file, "' doesn't exists!\n"))
     }
+    if (all(! section %in% c("SN", "FFQ", "LFQ", "GCF", "GCL", "GCC", "IS", "RL", "ID", "IC", "COV", "GCD"))) {
+      stop(paste0("Parsing '", section, "' is not supported!"))
+    }
+
+    grepTable = list(
+      SN = list(
+            columns = c(2, 3),
+            col.names = c("description", "value")
+            ),
+      FFQ = list(
+             columns = 2:43,
+             col.names = c("cycle", paste0("Qual", 1:41))
+             ),
+      LFQ = list(
+             columns = 2:43,
+             col.names = c("cycle", paste0("Qual", 1:41))
+             ),
+      GCF = list(
+             columns = c(2, 3),
+             col.names =  c("GC", "count")
+             ),
+      GCL = list(
+             columns = c(2, 3),
+             col.names =  c("GC", "count")
+             ),
+      GCC = list(
+             columns = 2:8,
+             col.names = c("cycle", "A", "C", "G", "T", "N", "O")
+             ),
+      IS = list(
+            columns =  c(2, 3),
+            col.names = c("insert_size", "pairs_total")
+            ),
+      RL = list(
+            columns =  c(2, 3),
+            col.names = c("read_length", "count")
+            ),
+      ID = list(
+            columns = c(2, 3, 4),
+            col.names = c("length", "number_of_insertions", "number_of_deletions")
+            ),
+      IC = list(
+            columns = c(2, 3, 4, 5, 6),
+            col.names = c("cycle", "number_of_insertions_fwd", "number_of_insertions_rwd", "number_of_deletions_fwd", "number_of_deletions_rwd")
+            ),
+      COV = list(
+             columns = c(3, 4),
+             col.names = c("coverage", "bases")
+             ),
+      GCD = list(
+             columns = c(2, 3, 4, 5, 6, 7, 8),
+             col.names = c("GC", "unique_sequence_percentiles", "10th", "25th", "50th", "75th", "90th")
+             )
+      )
 
     stats <- list()
     inputFile <- readLines(file)
-    toExtract <- list(
-                      section = list(
-                                     "SN", # Summary Numbers
-                                     "FFQ", # First Fragment Qualitites
-                                     "LFQ", # Last Fragment Qualitites
-                                     "GCF", # GC Content of First fragments
-                                     "GCL", # GC Content of Last fragments
-                                     "GCC", # ACGT content per cycle
-                                     "IS", # Insert Size
-                                     "RL", # Read lengths
-                                     "ID", # Indel distribution
-                                     "IC", # Indels per cycle
-                                     "COV", # Coverage distribution
-                                     "GCD" # GC-depth
-                                     ),
-                      columns = list(
-                                     c(2, 3),
-                                     2:43,
-                                     2:43,
-                                     c(2, 3),
-                                     c(2, 3),
-                                     2:8,
-                                     c(2, 3),
-                                     c(2, 3),
-                                     c(2, 3, 4),
-                                     c(2, 3, 4, 5, 6),
-                                     c(3, 4), # TODO review if all informative values are greped
-                                     c(2, 3, 4, 5, 6, 7, 8)
-                                     ),
-                      col.names = list(
-                                       c("description", "value"),
-                                       c("cycle", paste0("Qual", 1:41)),
-                                       c("cycle", paste0("Qual", 1:41)),
-                                       c("GC", "count"),
-                                       c("GC", "count"),
-                                       c("cycle", "A", "C", "G", "T", "N", "O"),
-                                       c("insert_size", "pairs_total"),
-                                       c("read_length", "count"),
-                                       c("length", "number_of_insertions", "number_of_deletions"),
-                                       c(
-                                         "cycle",
-                                         "number_of_insertions_fwd",
-                                         "number_of_insertions_rwd",
-                                         "number_of_deletions_fwd",
-                                         "number_of_deletions_rwd"
-                                         ),
-                                       c("coverage", "bases"),
-                                       c("GC", "unique_sequence_percentiles", "10th", "25th", "50th", "75th", "90th")
-                                       )
-                      )
-    for (i in 1:12) {
-        stats[[toExtract$section[[i]]]] <- .grepData(
-                                                     inputFile,
-                                                     toExtract$section[[i]],
-                                                     columns = toExtract$columns[[i]],
-                                                     col.names = toExtract$col.names[[i]]
-                                                     )
+    for (i in 1:length(section)) {
+        stats[[section[i]]] <- .grepData(
+                                        inputFile,
+                                        section[i],
+                                        columns = grepTable[[section[i]]]$columns,
+                                        col.names = grepTable[[section[i]]]$col.names
+                                        )
     }
     return(stats)
 }
@@ -111,11 +115,11 @@ readSamtoolsStats <- function(file) {
 #' .grepData(input=inputFile, section="SN", columns=c(2,3), col.names=c("description", "value"))
 #'
 .grepData <- function(input, section, columns, col.names = "") {
-  if (! section %in% c("SN", "FFQ", "LFQ", "GCF", "GCL", "GCC", "IS", "RL", "ID", "IC", "COV", "GCD")) { # TODO move it to readSamStats
-    stop(paste0("Parsing '", section, "' is not supported!"))
-  }
   section <- paste("^", section, sep = "")
   handle <- strsplit(input[grep(pattern = section, input)], split = "\t")
+  if (length(handle) == 0) {
+    stop("Could not find pattern '", section, "'!")
+  }
   handle <- data.frame(sapply(columns, function(i) sapply(handle, `[`, i)), stringsAsFactors = FALSE)
   if (length(col.names > 0)) {
     colnames(handle) <- col.names
