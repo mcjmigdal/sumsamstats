@@ -4,7 +4,8 @@
 \alias{readSamtoolsStats}
 \title{Parse samtools stat output}
 \usage{
-readSamtoolsStats(file)
+readSamtoolsStats(file, section = c("SN", "FFQ", "LFQ", "GCF", "GCL",
+  "GCC", "IS", "RL", "ID", "IC", "COV", "GCD"))
 }
 \arguments{
 \item{file}{the name of the file which the data are to be read from. File must be

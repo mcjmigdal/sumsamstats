@@ -54,12 +54,18 @@ server <- function(input, output, session) {
 
     output$limsInsertSize <- renderUI(sliderInput(inputId = "limsInsertSize", label = "Range:", min = 0, max = 2000, value = c(0, 400)))
 
+    # Test it outside the app?
     output$insertSizePlot <- renderPlot({
         if (length(input$limsInsertSize) == 0 || length(input$scaleInsertSize) == 0) {
           warning("One of input values to insertSizePlot was of length 0, returning NULL plot.")
           return(NULL)
         }
         useLogScale = ifelse(input$scaleInsertSize == "log", T, F)
-        plotInsertSize(data = insertSize(), samples = input$samplesInsertSize, log = useLogScale, lims = input$limsInsertSize)
+        mixedDist <- plotMixtureDistribution(x = insertSize()$insert_size, start = list(a = input$expa, b = input$expb, k1 = input$gaussk, mean1 = input$gaussmean, sd1 = input$gausssd), gnumber = 1)
+        mixedDistLayer <- mixedDist$layers
+        mixedDistLayer[[1]]$data <- mixedDist$data
+        mixedDistLayer[[1]]$mapping <- mixedDist$mapping
+        plotInsertSize(data = insertSize(), samples = input$samplesInsertSize, log = useLogScale, lims = input$limsInsertSize) + mixedDistLayer
+
     })
 }
