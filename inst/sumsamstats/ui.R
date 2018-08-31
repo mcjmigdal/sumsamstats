@@ -40,31 +40,22 @@ ui <- navbarPage(title="ATAC-seq quality control",
       uiOutput(outputId = "samplesInsertSize"),
       uiOutput(outputId = "scaleInsertSize"),
       uiOutput(outputId = "limsInsertSize"),
+      numericInput(inputId = "gaussnumber",
+                   label = "Number of gaussians:",
+                   value = 3,
+                   step = 1
+      ),
       numericInput(inputId = "expa",
                    label = "a",
-                   value = 0.01,
-                   step = 0.001
-                   ),
+                   value = 0.1,
+                   step = 0.1
+      ),
       numericInput(inputId = "expb",
                    label = "b",
-                   value = 0,
-                   step = 0.001
+                   value = -0.02,
+                   step = 0.01
       ),
-      numericInput(inputId = "gaussk",
-                   label = "k",
-                   value = 0,
-                   step = 0.001
-      ),
-      numericInput(inputId = "gaussmean",
-                   label = "mean",
-                   value = 0,
-                   step = 0.001
-      ),
-      numericInput(inputId = "gausssd",
-                   label = "sd",
-                   value = 0,
-                   step = 0.001
-      )
+      uiOutput(outputId = "fitParamsInput")
     ),
 
 

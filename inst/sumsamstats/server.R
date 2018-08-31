@@ -54,7 +54,14 @@ server <- function(input, output, session) {
 
     output$limsInsertSize <- renderUI(sliderInput(inputId = "limsInsertSize", label = "Range:", min = 0, max = 2000, value = c(0, 400)))
 
-    # Test it outside the app?
+    fitParamsInput <- list(length = input$gaussnumber * 3)
+    for (i in 1:input$gaussnumber) {
+      fitParamsInput[i + 3 * (i - 1)] <- numericInput(inputId = "gaussk", label = "k",value = 0.003, step = 0.001)
+      fitParamsInput[i + 1 + 3 * (i - 1)] <- numericInput(inputId = "gaussmean", label = "mean", value = 0.003, step = 0.001)
+      fitParamsInput[i + 2 + 3 * (i - 1)] <- numericInput(inputId = "gausssd", label = "sd", value = 30, step = 5)
+    }
+    output$fitParamsInput <- renderUI(tagList(fitParamsInput))
+
     output$insertSizePlot <- renderPlot({
         if (length(input$limsInsertSize) == 0 || length(input$scaleInsertSize) == 0) {
           warning("One of input values to insertSizePlot was of length 0, returning NULL plot.")
