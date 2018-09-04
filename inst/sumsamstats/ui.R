@@ -40,10 +40,12 @@ ui <- navbarPage(title="ATAC-seq quality control",
       uiOutput(outputId = "samplesInsertSize"),
       uiOutput(outputId = "scaleInsertSize"),
       uiOutput(outputId = "limsInsertSize"),
-      numericInput(inputId = "gaussnumber",
-                   label = "Number of gaussians:",
-                   value = 3,
-                   step = 1
+
+      tags$div(
+        actionButton(inputId = "addGauss",
+                   label = "Add gaussian"),
+        actionButton(inputId = "removeGauss",
+                   label = "Remove gaussian")
       ),
       numericInput(inputId = "expa",
                    label = "a",
@@ -55,7 +57,7 @@ ui <- navbarPage(title="ATAC-seq quality control",
                    value = -0.02,
                    step = 0.01
       ),
-      uiOutput(outputId = "fitParamsInput")
+      tags$div(id = "fitParams")
     ),
 
 

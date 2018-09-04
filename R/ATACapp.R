@@ -10,7 +10,7 @@
 #'
 #' @export
 runATACapp <- function() {
-    appDir <- "/home/mmigdal/Documents/sumsamstats/inst/sumsamstats"  #it must find path by itself
+    appDir <- "/home/mmigdal/Documents/site_things/sumsamstats/inst/sumsamstats"  #it must find path by itself
     if (appDir == "") {
         stop("Could not find example directory. Try re-installing 'sumsamstats'.", call. = FALSE)
     }
