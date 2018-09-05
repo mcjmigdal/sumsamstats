@@ -15,3 +15,4 @@ Standards from [encodeproject](https://www.encodeproject.org/atac-seq/)
 + mononucleosome peak must be present in the fragment length distribution
 + FRiP > 0.3
 + TSS enrichment
+
