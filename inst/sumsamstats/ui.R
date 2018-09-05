@@ -34,34 +34,11 @@ ui <- navbarPage(title="ATAC-seq quality control",
     ),
 
   tabPanel("Insert size distribution",
-
-
     inputPanel(
       uiOutput(outputId = "samplesInsertSize"),
       uiOutput(outputId = "scaleInsertSize"),
-      uiOutput(outputId = "limsInsertSize"),
-
-      tags$div(
-        actionButton(inputId = "addGauss",
-                   label = "Add gaussian"),
-        actionButton(inputId = "removeGauss",
-                   label = "Remove gaussian")
-      ),
-      numericInput(inputId = "expa",
-                   label = "a",
-                   value = 0.1,
-                   step = 0.1
-      ),
-      numericInput(inputId = "expb",
-                   label = "b",
-                   value = -0.02,
-                   step = 0.01
-      ),
-      tags$div(id = "fitParams")
+      uiOutput(outputId = "limsInsertSize")
     ),
-
-
-  plotOutput(outputId = "insertSizePlot")
-
-)
+    plotOutput(outputId = "insertSizePlot")
+  )
 )

@@ -54,49 +54,13 @@ server <- function(input, output, session) {
 
     output$limsInsertSize <- renderUI(sliderInput(inputId = "limsInsertSize", label = "Range:", min = 0, max = 2000, value = c(0, 400)))
 
-    fitParamsIds <- c()
-    insertUI(
-      selector = '#fitParams',
-      ui = tagList(
-        numericInput(inputId = paste0("gaussk", 0), label = "k", value = 0.003, step = 0.001),
-        numericInput(inputId = paste0("gaussmean", 0), label = "mean", value = 200, step = 10),
-        numericInput(inputId = paste0("gausssd", 0), label = "sd", value = 30, step = 10)
-      )
-    )
-    fitParamsIds <- c(id, fitParamsIds)
-    observeEvent(input$addGauss, {
-      id <- input$addGauss
-      insertUI(
-        selector = '#fitParams',
-        ui = tagList(
-          numericInput(inputId = paste0("gaussk", id), label = "k", value = 0.003, step = 0.001),
-          numericInput(inputId = paste0("gaussmean", id), label = "mean", value = 200, step = 10),
-          numericInput(inputId = paste0("gausssd", id), label = "sd", value = 30, step = 10)
-          )
-      )
-      fitParamsIds <- c(id, fitParamsIds)
-    })
-
-
-    # fitParamsInput <- list(length =  input$gaussnumber) # Do it via observer
-    # for (i in 1:1) {
-    #   fitParamsInput[[i + 3 * (i - 1)]] <- numericInput(inputId = "gaussk", label = "k", value = 0.003, step = 0.001)
-    #   fitParamsInput[[i + 1 + 3 * (i - 1)]] <- numericInput(inputId = "gaussmean", label = "mean", value = 200, step = 10)
-    #   fitParamsInput[[i + 2 + 3 * (i - 1)]] <- numericInput(inputId = "gausssd", label = "sd", value = 30, step = 10)
-    # }
-    # output$fitParamsInput <- renderUI(tagList(fitParamsInput))
-
     output$insertSizePlot <- renderPlot({
         if (length(input$limsInsertSize) == 0 || length(input$scaleInsertSize) == 0) {
           warning("One of input values to insertSizePlot was of length 0, returning NULL plot.")
           return(NULL)
         }
         useLogScale = ifelse(input$scaleInsertSize == "log", T, F)
-        mixedDist <- plotMixtureDistribution(x = insertSize()$insert_size, start = list(a = input$expa, b = input$expb, k1 = input$gaussk0, mean1 = input$gaussmean0, sd1 = input$gausssd0), gnumber = 1)
-        mixedDistLayer <- mixedDist$layers
-        mixedDistLayer[[1]]$data <- mixedDist$data
-        mixedDistLayer[[1]]$mapping <- mixedDist$mapping
-        plotInsertSize(data = insertSize(), samples = input$samplesInsertSize, log = useLogScale, lims = input$limsInsertSize) + mixedDistLayer
+        plotInsertSize(data = insertSize(), samples = input$samplesInsertSize, log = useLogScale, lims = input$limsInsertSize)
 
     })
 }
