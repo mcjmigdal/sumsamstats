@@ -1,3 +1,4 @@
+library(sumsamstats)
 library(dplyr)
 library(ggplot2)
 library(minpack.lm)
