@@ -3,7 +3,9 @@ library(ggplot2)
 library(minpack.lm)
 library(shiny)
 
-exampleInput <- list.files(system.file("extdata", package = "sumsamstats"), full.names = TRUE)
+exampleInput <- list.files(system.file("extdata", package = "sumsamstats"),
+                           full.names = TRUE
+                           )
 
 server <- function(input, output, session) {
 
@@ -13,7 +15,7 @@ server <- function(input, output, session) {
             paths <- exampleInput
         }
         lapply(paths, readSamtoolsStats)
-    })  # TODO SET UP DEFAULT PATHs TO EXEMPLARY LOGS
+    })
 
     samples <- reactive({
         names <- input$inputFiles$name
@@ -23,27 +25,27 @@ server <- function(input, output, session) {
         gsub(".stats.txt$", "", gsub(".*/", "", names))
     })
 
-    summaryNumbers = reactive(do.call(rbind, lapply(1:length(data()), function(i) {
-        df = data()
-        df[[i]]$SN$sample = factor(samples()[i])
+    summaryNumbers <- reactive(do.call(rbind, lapply(1:length(data()), function(i) {
+        df <- data()
+        df[[i]]$SN$sample <- factor(samples()[i])
         df[[i]]$SN
     })) %>% mutate(value = as.numeric(value), description = gsub(":$", "", description)))
 
-    insertSize = reactive(do.call(rbind, lapply(1:length(data()), function(i) {
-        df = data()
-        df[[i]]$IS$sample = factor(samples()[i])
+    insertSize <- reactive(do.call(rbind, lapply(1:length(data()), function(i) {
+        df <- data()
+        df[[i]]$IS$sample <- factor(samples()[i])
         df[[i]]$IS
-    })) %>% mutate_if(is.character, as.numeric) %>% group_by(sample) %>% mutate(pairs_total = pairs_total/sum(pairs_total)))
+    })) %>% mutate_if(is.character, as.numeric) %>% group_by(sample) %>% mutate(pairs_total = pairs_total / sum(pairs_total)))
 
 
     output$summaryInputSamples <- renderUI(checkboxGroupInput(inputId = "samplesSummaryNumbers", label = "Samples to show:", choices = unique(summaryNumbers()$sample),
         selected = unique(summaryNumbers()$sample)))
 
-    output$summaryInputProperty <- renderUI(selectInput(inputId = "what", label = "Property to plot:", choices = unique(summaryNumbers()$description),
+    output$summaryInputProperty <- renderUI(selectInput(inputId = "propertyToPlotSummaryNumbers", label = "Property to plot:", choices = unique(summaryNumbers()$description),
         selected = "raw total sequences:"))
 
     output$summaryNumbersPlot <- renderPlot({
-        plotSummaryNumbers(data = summaryNumbers(), samples = input$samplesSummaryNumbers, what = input$what)
+        plotSummaryNumbers(data = summaryNumbers(), samples = input$samplesSummaryNumbers, what = input$propertyToPlotSummaryNumbers)
     })
 
     output$samplesInsertSize <- renderUI(checkboxGroupInput(inputId = "samplesInsertSize", label = "Samples to show:", choices = unique(summaryNumbers()$sample),
@@ -58,7 +60,7 @@ server <- function(input, output, session) {
           warning("One of input values to insertSizePlot was of length 0, returning NULL plot.")
           return(NULL)
         }
-        useLogScale = ifelse(input$scaleInsertSize == "log", T, F)
+        useLogScale <- ifelse(input$scaleInsertSize == "log", T, F)
         plotInsertSize(data = insertSize(), samples = input$samplesInsertSize, log = useLogScale, lims = input$limsInsertSize)
 
     })

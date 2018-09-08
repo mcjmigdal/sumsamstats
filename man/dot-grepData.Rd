@@ -9,8 +9,8 @@
 \arguments{
 \item{input}{A character vector containing output of samtools stats, each line as one element.}
 
-\item{section}{A pattern to extract from the report. Each section of samtools stats report is uniquley
-labeled, for example Summary Numbers are labeled as SN. Currently supported sections: SN, IS.}
+\item{section}{Pattern to extract from the report. Each section of samtools stats report is uniquley
+labeled, for example Summary Numbers are labeled as SN.}
 
 \item{columns}{A integer vector containing numbers of columns to extract from specified section of samtools
 stats report.}
@@ -25,7 +25,7 @@ As readSamtoolsStats parses output of samtools stat this function is used to gre
 parts of the output.
 }
 \examples{
-file <- "path/to/samtools/stats/output"
+file <- system.file("extdata", "sample1", package = "sumsamstats")
 inputFile <- readLines(file)
 .grepData(input=inputFile, section="SN", columns=c(2,3), col.names=c("description", "value"))
 

@@ -11,15 +11,15 @@
 #' @param what string describing property to plot from Summary Numbers.
 #'
 #' @examples
-#' SN <- readSamtoolsStats()
-#' plotSummaryNumbers(data = SN, samples = c("sample1", "sample2"), what = "raw total sequences")
+#' SN <- readSamtoolsStats(system.file('extdata', 'sample1', package = 'sumsamstats'))
+#' plotSummaryNumbers(data = SN, samples = c('sample1'), what = 'raw total sequences')
 #'
 #' @import ggplot2
 #'
 #' @export
 plotSummaryNumbers <- function(data, samples, what = "raw total sequences") {
-    data = data %>% filter(sample %in% samples) %>% filter(description %in% what)
-    ggplot(data = data, mapping = aes(x = sample, y = value, fill = sample)) + geom_bar(stat = "identity") + ylab(what) + theme(axis.text.x = element_text(angle = 90,
+    data <- data %>% filter(sample %in% samples) %>% filter(description %in% what)
+    ggplot(data = data, mapping = aes(x = sample, y = value, fill = sample)) + geom_bar(stat = "identity") + ylab(what) + theme(axis.text.x = element_text(angle = 90, 
         hjust = 1))
 }
 
@@ -47,14 +47,12 @@ plotSummaryNumbers <- function(data, samples, what = "raw total sequences") {
 #'
 #' @export
 plotInsertSize <- function(data, samples, log = FALSE, lims = c(0, 400), sizeLimit = 0) {
-    color = rainbow(length(levels(data$sample)))
-    names(color) = levels(data$sample)
+    color <- grDevices::rainbow(length(levels(data$sample)))
+    names(color) <- levels(data$sample)
     if (log) {
-        data$pairs_total = log(data$pairs_total)
+        data$pairs_total <- log(data$pairs_total)
     }
-    data = data %>% filter(insert_size >= sizeLimit) %>% filter(sample %in% samples)
-    ggplot(data = data, mapping = aes(x = insert_size, y = pairs_total, color = sample)) +
-      geom_line() +
-      scale_colour_manual(values = color[as.character(data$sample)]) +
-      xlim(lims) + xlab("Insert size") + ylab("Normalized read density * 10e-3")
+    data <- data %>% filter(insert_size >= sizeLimit) %>% filter(sample %in% samples)
+    ggplot(data = data, mapping = aes(x = insert_size, y = pairs_total, color = sample)) + geom_line() + scale_colour_manual(values = color[as.character(data$sample)]) + 
+        xlim(lims) + xlab("Insert size") + ylab("Normalized read density * 10e-3")
 }

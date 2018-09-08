@@ -1,10 +1,10 @@
-ui <- navbarPage(title="ATAC-seq quality control",
+ui <- navbarPage(title = "ATAC-seq quality control",
 
 
     tabPanel("Input files",
              h1("Samtools stats based ATAC-seq quality control"),
              p("This app summarises output of samtools stats in a way that allows quick inspection of ATAC-seq libraries quality,
-               quality standards were taken from", a(href="https://www.encodeproject.org/atac-seq", "ENCODE website.")),
+               quality standards were taken from", a(href = "https://www.encodeproject.org/atac-seq", "ENCODE website.")),
              br(),
              p("By default app preloads exemplary input files, so you might explore it! Just select any other tab above."),
              p("If you prefer to check quality of your libraries provide outputs from samtools stats below."),

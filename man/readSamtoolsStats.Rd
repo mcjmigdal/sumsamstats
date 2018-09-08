@@ -11,6 +11,9 @@ readSamtoolsStats(file, section = c("SN", "FFQ", "LFQ", "GCF", "GCL",
 \item{file}{the name of the file which the data are to be read from. File must be
 of type \code{character}, providing path to input file. If it does not provide an
 absolute path(s), the file name is relative to the current working directory, \code{getwd()}.}
+
+\item{section}{A character vector of patterns to extract from the report. Each section of samtools stats report is uniquley
+labeled, for example Summary Numbers are labeled as SN. By default all sections are read.}
 }
 \value{
 list of data frames holding data from different parts of \code{samtools stat} output.
@@ -24,6 +27,6 @@ readSamtoolsStats parses output of samtools stat making it easy to
 work with it in R.
 }
 \examples{
-readSamtoolsStats(file = "path/to/samtools/stats/output")
+readSamtoolsStats(file = system.file("extdata", "sample1", package = "sumsamstats"))
 
 }
