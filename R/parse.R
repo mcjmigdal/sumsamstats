@@ -30,16 +30,59 @@ readSamtoolsStats <- function(file, section = c("SN", "FFQ", "LFQ", "GCF", "GCL"
     if (all(!section %in% c("SN", "FFQ", "LFQ", "GCF", "GCL", "GCC", "IS", "RL", "ID", "IC", "COV", "GCD"))) {
         stop(paste0("Parsing '", section, "' is not supported!"))
     }
-    
-    grepTable <- list(SN = list(columns = c(2, 3), col.names = c("description", "value")), FFQ = list(columns = 2:43, col.names = c("cycle", paste0("Qual", 
-        1:41))), LFQ = list(columns = 2:43, col.names = c("cycle", paste0("Qual", 1:41))), GCF = list(columns = c(2, 3), col.names = c("GC", "count")), 
-        GCL = list(columns = c(2, 3), col.names = c("GC", "count")), GCC = list(columns = 2:8, col.names = c("cycle", "A", "C", "G", "T", "N", "O")), 
-        IS = list(columns = c(2, 3), col.names = c("insert_size", "pairs_total")), RL = list(columns = c(2, 3), col.names = c("read_length", "count")), 
-        ID = list(columns = c(2, 3, 4), col.names = c("length", "number_of_insertions", "number_of_deletions")), IC = list(columns = c(2, 3, 4, 5, 
-            6), col.names = c("cycle", "number_of_insertions_fwd", "number_of_insertions_rwd", "number_of_deletions_fwd", "number_of_deletions_rwd")), 
-        COV = list(columns = c(3, 4), col.names = c("coverage", "bases")), GCD = list(columns = c(2, 3, 4, 5, 6, 7, 8), col.names = c("GC", "unique_sequence_percentiles", 
-            "10th", "25th", "50th", "75th", "90th")))
-    
+
+    grepTable <- list(
+      SN = list(
+        columns = c(2, 3),
+        col.names = c("description", "value")
+        ),
+      FFQ = list(
+        columns = 2:43,
+        col.names = c("cycle", paste0("Qual", 1:41))
+        ),
+      LFQ = list(
+        columns = 2:43,
+        col.names = c("cycle", paste0("Qual", 1:41))
+        ),
+      GCF = list(
+        columns = c(2, 3),
+        col.names = c("GC", "count")
+        ),
+      GCL = list(
+        columns = c(2, 3),
+        col.names = c("GC", "count")
+        ),
+      GCC = list(
+        columns = 2:8,
+        col.names = c("cycle", "A", "C", "G", "T", "N", "O")
+        ),
+      IS = list(
+        columns = c(2, 3),
+        col.names = c("insert_size", "pairs_total")
+        ),
+      RL = list(
+        columns = c(2, 3),
+        col.names = c("read_length", "count")
+        ),
+      ID = list(
+        columns = c(2, 3, 4),
+        col.names = c("length", "number_of_insertions", "number_of_deletions")
+        ),
+      IC = list(
+        columns = c(2, 3, 4, 5, 6),
+        col.names = c("cycle", "number_of_insertions_fwd", "number_of_insertions_rwd",
+                      "number_of_deletions_fwd", "number_of_deletions_rwd")
+        ),
+      COV = list(
+        columns = c(3, 4),
+        col.names = c("coverage", "bases")
+        ),
+      GCD = list(
+        columns = c(2, 3, 4, 5, 6, 7, 8),
+        col.names = c("GC", "unique_sequence_percentiles", "10th", "25th", "50th", "75th", "90th")
+        )
+      )
+
     stats <- list()
     inputFile <- readLines(file)
     for (i in 1:length(section)) {
@@ -76,7 +119,9 @@ readSamtoolsStats <- function(file, section = c("SN", "FFQ", "LFQ", "GCF", "GCL"
     if (length(handle) == 0) {
         stop("Could not find pattern '", section, "'!")
     }
-    handle <- data.frame(sapply(columns, function(i) sapply(handle, `[`, i)), stringsAsFactors = FALSE)
+    handle <- data.frame(vapply(columns, function(i) {
+        vapply(handle, `[`, i, FUN.VALUE = character(1))
+    }, FUN.VALUE = character(length(handle))), stringsAsFactors = FALSE)
     if (length(col.names > 0)) {
         colnames(handle) <- col.names
     }
