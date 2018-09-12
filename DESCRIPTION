@@ -11,7 +11,8 @@ LazyData: true
 Imports:
   dplyr,
   ggplot2,
-  shiny
+  shiny,
+  grDevices
 RoxygenNote: 6.1.0
 Suggests: knitr,
     rmarkdown,
