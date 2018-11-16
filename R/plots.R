@@ -1,14 +1,18 @@
-#' Plot Summary Numbers Samtools Stat section
+#' Plot Summary Numbers
 #'
-#' plotSummaryNumbers plots Summary Numbers (SN) part of output returned by
-#' \code{\link{readSamtoolsStats}}.
+#' plotSummaryNumbers plots properties from Summary Numbers (SN) part of output returned
+#' by \code{\link{readSamtoolsStats}}. This includes number of mapped reads, mapped and paired reads,
+#' and alignment rate (see details for compleate list). Function also provides means to plot some
+#' properties that are not explicitly available in the output.
 #'
 #' @param data Summary Numbers (SN) part of output returned by \code{\link{readSamtoolsStats}}
 #' or formated data frame of values to plot.
 #'
 #' @param samples vector of samples names from data that are required to be plotted.
 #'
-#' @param what string describing property to plot from Summary Numbers.
+#' @param what string describing property to plot. Valid choices includes all properties from
+#' Summary Numbers (SN) part of output returned by \code{\link{readSamtoolsStats}} and additionaly
+#' 'alignment rate'.
 #'
 #' @examples
 #' SN <- readSamtoolsStats(system.file('extdata', 'sample1', package = 'sumsamstats'))
@@ -20,11 +24,20 @@
 #'
 #' @export
 plotSummaryNumbers <- function(data, samples, what = "raw total sequences") {
-    data <- data %>% dplyr::filter(sample %in% samples) %>% dplyr::filter(description %in% what)
+    if (what == "alignment rate") {
+      data <- dplyr::filter(data, sample %in% samples) %>%
+        dplyr::filter(description %in% c("reads mapped", "reads unmapped")) %>%
+        dplyr::group_by(sample) %>%
+        dplyr::summarise(value = value[description == 'reads mapped'] / sum(value))
+    } else {
+      data <- dplyr::filter(data, sample %in% samples) %>%
+        dplyr::filter(description %in% what)
+    }
     ggplot(data = data, mapping = aes(x = sample, y = value, fill = sample)) +
       geom_bar(stat = "identity") +
       ylab(what) +
-      theme(axis.text.x = element_text(angle = 90, hjust = 1))
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+      {if(what %in% c("reads mapped and paired")) geom_hline(yintercept = 50e6, linetype = "dashed", color = 'black')}
 }
 
 #' Plot Insert Size Samtools Stat section

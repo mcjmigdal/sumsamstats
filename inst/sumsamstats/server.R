@@ -42,10 +42,17 @@ server <- function(input, output, session) {
     output$summaryInputSamples <- renderUI(checkboxGroupInput(inputId = "samplesSummaryNumbers", label = "Samples to show:", choices = unique(summaryNumbers()$sample),
         selected = unique(summaryNumbers()$sample)))
 
-    output$summaryInputProperty <- renderUI(selectInput(inputId = "propertyToPlotSummaryNumbers", label = "Property to plot:", choices = unique(summaryNumbers()$description),
-        selected = "raw total sequences:"))
+    output$summaryInputProperty <- renderUI(selectInput(inputId = "propertyToPlotSummaryNumbers", label = "Property to plot:",
+                                                        choices = c("raw total sequences", "reads mapped and paired", "alignment rate"),
+                                                        selected = "reads mapped and paired"
+                                                        )
+                                            )
 
     output$summaryNumbersPlot <- renderPlot({
+        if(length(input$propertyToPlotSummaryNumbers) == 0) {
+          warning("propertyToPlotSummaryNumbers input value to summaryNumbersPlot was of length 0, returning NULL plot.")
+          return(NULL)
+        }
         plotSummaryNumbers(data = summaryNumbers(), samples = input$samplesSummaryNumbers, what = input$propertyToPlotSummaryNumbers)
     })
 
