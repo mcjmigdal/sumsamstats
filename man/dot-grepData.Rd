@@ -25,8 +25,8 @@ As readSamtoolsStats parses output of samtools stat this function is used to gre
 parts of the output.
 }
 \examples{
-file <- system.file("extdata", "sample1", package = "sumsamstats")
+file <- system.file('extdata', 'sample1', package = 'sumsamstats')
 inputFile <- readLines(file)
-.grepData(input=inputFile, section="SN", columns=c(2,3), col.names=c("description", "value"))
+.grepData(input=inputFile, section='SN', columns=c(2,3), col.names=c('description', 'value'))
 
 }

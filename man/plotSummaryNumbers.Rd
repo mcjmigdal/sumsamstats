@@ -2,7 +2,7 @@
 % Please edit documentation in R/plots.R
 \name{plotSummaryNumbers}
 \alias{plotSummaryNumbers}
-\title{Plot Summary Numbers Samtools Stat section}
+\title{Plot Summary Numbers}
 \usage{
 plotSummaryNumbers(data, samples, what = "raw total sequences")
 }
@@ -12,14 +12,18 @@ or formated data frame of values to plot.}
 
 \item{samples}{vector of samples names from data that are required to be plotted.}
 
-\item{what}{string describing property to plot from Summary Numbers.}
+\item{what}{string describing property to plot. Valid choices includes all properties from
+Summary Numbers (SN) part of output returned by \code{\link{readSamtoolsStats}} and additionaly
+'alignment rate'.}
 }
 \description{
-plotSummaryNumbers plots Summary Numbers (SN) part of output returned by
-\code{\link{readSamtoolsStats}}.
+plotSummaryNumbers plots properties from Summary Numbers (SN) part of output returned
+by \code{\link{readSamtoolsStats}}. This includes number of mapped reads, mapped and paired reads,
+and alignment rate (see details for compleate list). Function also provides means to plot some
+properties that are not explicitly available in the output.
 }
 \examples{
-SN <- readSamtoolsStats()
-plotSummaryNumbers(data = SN, samples = c("sample1", "sample2"), what = "raw total sequences")
+SN <- readSamtoolsStats(system.file('extdata', 'sample1', package = 'sumsamstats'))
+plotSummaryNumbers(data = SN, samples = c('sample1'), what = 'raw total sequences')
 
 }

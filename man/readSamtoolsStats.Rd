@@ -27,6 +27,6 @@ readSamtoolsStats parses output of samtools stat making it easy to
 work with it in R.
 }
 \examples{
-readSamtoolsStats(file = system.file("extdata", "sample1", package = "sumsamstats"))
+readSamtoolsStats(file = system.file('extdata', 'sample1', package = 'sumsamstats'))
 
 }

@@ -10,10 +10,7 @@ runATACapp()
 Launch Shiny application that allows to quickly insepect multiple ATAC-seq
 libraries and check some of the basic quality controls.
 }
-\details{
-Some more detailed description etc.
-}
 \examples{
-sumsamstats::runExample()
+sumsamstats::runATACapp()
 
 }
