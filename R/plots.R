@@ -67,7 +67,7 @@ plotSummaryNumbers <- function(data, samples, what = "raw total sequences") {
 #' @export
 plotInsertSize <- function(data, samples, log = FALSE, lims = c(0, 400), sizeLimit = 0) {
     data <- data %>% dplyr::filter(insert_size >= sizeLimit) %>% dplyr::filter(sample %in% samples)
-    color <- colorspace::diverge_hcl(length(levels(data$sample)))
+    color <- colorspace::rainbow_hcl(length(levels(data$sample)))
     names(color) <- levels(data$sample)
     if (log) {
         data$pairs_total <- log(data$pairs_total)
