@@ -66,12 +66,12 @@ plotSummaryNumbers <- function(data, samples, what = "raw total sequences") {
 #'
 #' @export
 plotInsertSize <- function(data, samples, log = FALSE, lims = c(0, 400), sizeLimit = 0) {
-    data <- data %>% dplyr::filter(insert_size >= sizeLimit) %>% dplyr::filter(sample %in% samples)
     color <- colorspace::rainbow_hcl(length(levels(data$sample)))
     names(color) <- levels(data$sample)
     if (log) {
         data$pairs_total <- log(data$pairs_total)
     }
+    data <- data %>% dplyr::filter(insert_size >= sizeLimit) %>% dplyr::filter(sample %in% samples)
     ggplot(data = data, mapping = aes(x = insert_size, y = pairs_total, color = sample)) +
       geom_line() +
       scale_colour_manual(values = color[as.character(data$sample)]) +
