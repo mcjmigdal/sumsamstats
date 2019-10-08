@@ -1,6 +1,6 @@
 Parser and tools for summarising outputs of samtools stats, with ATAC-seq in mind.
 It's greatest feature will be the possiblility to fit the distribution of
-exponential and gaussians into IS distribution. And it will present all this
+exponential and gaussians into IS distribution (never happend still usefull for parsing samtools stats output :). And it will present all this
 with userfriendly shiny interface.
 
 ## ATAC-seq quality control checks for multiple libraries
