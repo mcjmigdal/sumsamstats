@@ -37,7 +37,7 @@ plotSummaryNumbers <- function(data, samples, what = "raw total sequences") {
       geom_bar(stat = "identity") +
       ylab(what) +
       theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-      {if(what %in% c("reads mapped and paired")) geom_hline(yintercept = 50e6, linetype = "dashed", color = 'black')}
+      # {if(what %in% c("reads mapped and paired")) geom_hline(yintercept = 50e6, linetype = "dashed", color = 'black')}
 }
 
 #' Plot Insert Size Samtools Stat section
