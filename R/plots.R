@@ -36,7 +36,7 @@ plotSummaryNumbers <- function(data, samples, what = "raw total sequences") {
     ggplot(data = data, mapping = aes(x = sample, y = value, fill = sample)) +
       geom_bar(stat = "identity") +
       ylab(what) +
-      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))
       # {if(what %in% c("reads mapped and paired")) geom_hline(yintercept = 50e6, linetype = "dashed", color = 'black')}
 }
 
